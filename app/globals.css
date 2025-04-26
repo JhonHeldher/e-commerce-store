@@ -1,0 +1,35 @@
+@import "tailwindcss";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* -------- Base layer -------- */
+@layer base {
+  html {
+    @apply scroll-smooth;
+  }
+}
+
+/* -------- Custom components -------- */
+@layer components {
+  .geist-sans {
+    font-family: "Geist", sans-serif;
+  }
+
+  .geist-mono {
+    font-family: "Geist Mono", monospace;
+  }
+}
+
+/* -------- Custom utilities -------- */
+@layer utilities {
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+}
