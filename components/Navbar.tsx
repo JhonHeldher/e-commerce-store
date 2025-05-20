@@ -51,7 +51,8 @@ const Navbar = () => {
                             <ul className="absolute flex flex-col w-25 items-center gap-2 p-3 top-10 right-0 bg-white font-bold shadow-lg rounded-lg">
                                 <li>
                                     <Link
-                                        href={user ? "/wishlist" : "/sign-in"}
+                                        // href={user ? "/wishlist" : "/sign-in"}
+                                        href="/wishlist"
                                         className="hover:text-blue-500"
                                     >
                                         Wishlist

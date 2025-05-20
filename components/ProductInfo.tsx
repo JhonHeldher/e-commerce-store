@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import HeartFavorite from './HeartFavorite';
 import { MinusCircle, PlusCircle } from 'lucide-react';
+import { useRouter } from "next/navigation"
+import { useUser } from "@clerk/nextjs"
 
 import useCart from '@/lib/hooks/useCart';
 
@@ -12,6 +14,10 @@ const ProductInfo = ({ productInfo }: { productInfo: ProductType }) => {
   const [selectedSize, setSelectedSize] = useState<string>(productInfo.sizes[0]);
   const [quantity, setQuantity] = useState<number>(1);
   const cart = useCart()
+
+
+  const router = useRouter();
+  const { user } = useUser();
 
   return (
     <div className='max-w-[400px] flex flex-col gap-4'>
@@ -92,6 +98,10 @@ const ProductInfo = ({ productInfo }: { productInfo: ProductType }) => {
 
       <button
         onClick={() => {
+          if (!user) {
+            router.push("/sign-in");
+            return;
+          }
           cart.addItem({
             item: productInfo,
             quantity,
