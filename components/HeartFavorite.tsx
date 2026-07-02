@@ -33,8 +33,11 @@ const HeartFavorite = ({ product }: { product: ProductType }) => {
     };
 
     useEffect(() => {
-        if (user) getUser();
-    }, [user]);
+        // 🔥 CORREÇÃO 1: Só busca se o usuário existir E se já não estiver logado localmente
+        if (user && !signedInUser && !loading) {
+            getUser();
+        }
+    }, [user?.id]); // 🔥 CORREÇÃO 2: Dependência estável usando o ID (string), evita loops infinitos
 
     const handleLike = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.preventDefault();
@@ -68,10 +71,10 @@ const HeartFavorite = ({ product }: { product: ProductType }) => {
     };
 
     return (
-        <button onClick={handleLike} className='cursor-pointer'>
-            <Heart fill={`${isLiked ? "red" : "none"}`} />
+        <button onClick={handleLike} disabled={loading} className='cursor-pointer disabled:opacity-50'>
+            <Heart fill={`${isLiked ? "red" : "none"}`} color={`${isLiked ? "red" : "currentColor"}`} />
         </button>
     )
 }
 
-export default HeartFavorite
+export default HeartFavorite;

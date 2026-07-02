@@ -21,3 +21,5 @@ export const connectToDB = async (): Promise<void> => {
         console.log(err)
     }
 }
+
+

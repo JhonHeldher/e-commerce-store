@@ -5,6 +5,7 @@ import { useUser } from '@clerk/nextjs'
 import { MinusCircle, PlusCircle, X } from 'lucide-react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 
 const Cart = () => {
   const router = useRouter();
@@ -16,7 +17,7 @@ const Cart = () => {
     , 0);
   const totalRounded = parseFloat(total.toFixed(2));
 
-  console.log("user info feedback", user)
+
 
   const customer = {
     clerkId: user?.id,
@@ -29,18 +30,25 @@ const Cart = () => {
       if (!user) {
         return router.push("/sign-in");
       }
+
+      
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/checkout`, {
         method: 'POST',
+        headers: {
+          "Content-Type": "application/json", 
+        },
         body: JSON.stringify({
-          cartItems: cart.cartItems, customer
+          cartItems: cart.cartItems,
+          customer
         }),
       });
+
       const data = await res.json();
       window.location.href = data.url;
-      console.log(data)
+      console.log(data);
 
-    } catch (error) {
-      console.log("[checkout_POST]", error)
+    } catch (err) {
+      console.log("[checkout_POST] Ops, algo deu errado no servidor: ", err);
     }
   };
 
@@ -56,7 +64,7 @@ const Cart = () => {
           <div>
             {cart.cartItems.map((cartItem) => (
               <div
-                key={cartItem.item._id}
+                key={`${cartItem.item._id}-${cartItem.color || ''}-${cartItem.size || ''}`}
                 className='w-full relative flex max-sm:flex-col max-sm:gap-3 justify-between hover:bg-gray-100 px-6 py-5 max-sm:pt-10 shadow-sm rounded-lg'
               >
                 <div className='flex items-center max-sm:mt-5'>
@@ -69,7 +77,11 @@ const Cart = () => {
                   />
 
                   <div className="flex flex-col gap-3 ml-4">
-                    <span className='font-bold max-sm:absolute max-sm:top-1 max-sm:left-6 max-sm:max-w-48'>{cartItem.item.title}</span>
+                    <Link href={`/products/${cartItem.item._id}`}>
+                      <span className='font-bold max-sm:absolute max-sm:top-1 max-sm:left-6 max-sm:max-w-48 hover:underline cursor-pointer'>
+                        {cartItem.item.title}
+                      </span>
+                    </Link>
 
                     {cartItem.color && (
                       <span>
@@ -96,13 +108,13 @@ const Cart = () => {
                   <MinusCircle
                     size={32}
                     className='cursor-pointer hover:text-blue-500'
-                    onClick={() => cart.decreaseQuantity(cartItem.item._id)}
+                    onClick={() => cart.decreaseQuantity(cartItem.item._id, cartItem.color, cartItem.size)}
                   />
                   <span className='text-gray-500 cursor-pointer'>{cartItem.quantity}</span>
                   <PlusCircle
                     size={32}
                     className='cursor-pointer hover:text-blue-500'
-                    onClick={() => cart.increaseQuantity(cartItem.item._id)}
+                    onClick={() => cart.increaseQuantity(cartItem.item._id, cartItem.color, cartItem.size)}
                   />
                 </div>
 
@@ -110,7 +122,7 @@ const Cart = () => {
                 <div className='flex absolute max-sm:top-1 max-sm:right-1 top-3 right-3'>
                   <X
                     className='cursor-pointer border border-transparent hover:text-red-500 hover:border hover:border-red-500 hover:rounded-full'
-                    onClick={() => cart.removeItem(cartItem.item._id)}
+                    onClick={() => cart.removeItem(cartItem.item._id, cartItem.color, cartItem.size)}
                   />
                 </div>
               </div>
@@ -147,4 +159,4 @@ const Cart = () => {
   )
 }
 
-export default Cart
+export default Cart;
